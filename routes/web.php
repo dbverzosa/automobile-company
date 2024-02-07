@@ -5,7 +5,10 @@ use App\Http\Controllers\CustomerPanel\CustomerController;
 use App\Http\Controllers\DealerPanel\DealerController;
 use App\Http\Controllers\ManufacturerPanel\ManufacturerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SupplierPanel\ModelPartsController;
 use App\Http\Controllers\SupplierPanel\SupplierController;
+use App\Http\Controllers\SupplierPanel\SupProfileController;
+use App\Models\ModelParts;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +34,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::resource('supplier/dashboard/modelparts', ModelPartsController::class)
+    ->only(['index', 'store', 'addmodelparts',])
+    ->middleware(['auth', 'role:supplier']);
+
+    Route::get('supplier/dashboard/modelparts/search', [ModelPartsController::class, 'search'])
+    ->name('supplier.modelparts.search')
+    ->middleware(['auth', 'role:supplier']);
+
+    Route::get('supplier/dashboard/modelparts', [ModelPartsController::class, 'index'])
+    ->name('supplier.modelparts.index')
+    ->middleware(['auth', 'role:supplier']);
+    
+    Route::post('supplier/dashboard/modelparts/add', [ModelPartsController::class, 'addmodelparts'])
+    ->name('supplier.modelparts.addmodelparts')
+    ->middleware(['auth', 'role:supplier']);
+
 require __DIR__.'/auth.php';
 
 Route::middleware(['auth','role:admin'])->group(function () {
@@ -40,6 +60,7 @@ Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.da
 
 Route::middleware(['auth','role:supplier'])->group(function () {
     Route::get('supplier/dashboard', [SupplierController::class, 'index'])->name('supplier.dashboard');
+    // Route::get('supplier/dashboard', [ModelPartsController::class, 'index'])->only(['index', 'store']);
 });
 
 
@@ -51,3 +72,8 @@ Route::middleware(['auth','role:manufacturer'])->group(function () {
 Route::middleware(['auth','role:dealer'])->group(function () {
     Route::get('dealer/dashboard', [DealerController::class, 'index'])->name('dealer.dashboard');
 });
+
+
+
+
+
