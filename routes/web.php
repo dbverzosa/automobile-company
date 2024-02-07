@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
 
 
 Route::resource('supplier/dashboard/modelparts', ModelPartsController::class)
-    ->only(['index', 'store', 'addmodelparts',])
+    ->only(['index'])
     ->middleware(['auth', 'role:supplier']);
 
     Route::get('supplier/dashboard/modelparts/search', [ModelPartsController::class, 'search'])
@@ -46,10 +46,8 @@ Route::resource('supplier/dashboard/modelparts', ModelPartsController::class)
     Route::get('supplier/dashboard/modelparts', [ModelPartsController::class, 'index'])
     ->name('supplier.modelparts.index')
     ->middleware(['auth', 'role:supplier']);
-    
-    Route::post('supplier/dashboard/modelparts/add', [ModelPartsController::class, 'addmodelparts'])
-    ->name('supplier.modelparts.addmodelparts')
-    ->middleware(['auth', 'role:supplier']);
+
+  
 
 require __DIR__.'/auth.php';
 
@@ -60,6 +58,7 @@ Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.da
 
 Route::middleware(['auth','role:supplier'])->group(function () {
     Route::get('supplier/dashboard', [SupplierController::class, 'index'])->name('supplier.dashboard');
+    Route::get('/supplier/search', [SupplierController::class, 'search'])->name('supplier.search');
     // Route::get('supplier/dashboard', [ModelPartsController::class, 'index'])->only(['index', 'store']);
 });
 

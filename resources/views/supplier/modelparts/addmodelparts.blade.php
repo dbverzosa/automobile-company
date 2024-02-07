@@ -9,7 +9,7 @@
 
     <div class="container">
 
-        <form action="" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('supplier.modelparts.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-3">
                 <label for="model_name" class="form-label">Model Name</label>

@@ -21,6 +21,7 @@ public function index(Request $request): View
     return view('supplier/modelparts.index', ['model_parts' => $modelparts]);
 }
 
+
 public function search(Request $request): View
 {
     // Retrieve search parameters from the request
@@ -109,41 +110,68 @@ public function search(Request $request): View
     //     return view('supplier/modelparts.index');
     // }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function addmodelparts(Request $request)
+
+    public function store(Request $request)
     {
         $validatedData = $request->validate([
             'model_name' => 'required|string|max:100',
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'price' => 'required|numeric',
             'quantity' => 'required',
             'date_supplied' => 'required|date',
             'is_available' => 'required|boolean'
         ]);
 
-          // Handle the file upload
-          if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = $file->getClientOriginalName();
-            $file->storeAs('public/modelparts_images', $filename);
-
-            $validatedData['image'] = $filename;
+        try {
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filename = $file->store('public/modelparts_images');
+                $validatedData['image'] = $filename;
+            }
 
             ModelParts::create($validatedData);
 
-            // return redirect()->route('supplier.modelparts.addmodelparts')->with('Success', 'Model Part is added successfully');
-            
-            // Redirect to a different route after successful addition
-        return redirect()->route('supplier.modelparts.index')->with('success', 'Model Part added successfully');
+            return redirect()->route('supplier.modelparts.index')->with('success', 'Model Part added successfully');
+        } catch (\Exception $e) {
+            // Handle any errors that occur during the file upload process
+            return redirect()->route('supplier.modelparts.addmodelparts')->with('error', 'Failed to upload image');
+        }
     }
+    /**
+     * Show the form for creating a new resource.
+     */
+//     public function store(Request $request)
+//     {
+//         $validatedData = $request->validate([
+//             'model_name' => 'required|string|max:100',
+//             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+//             'price' => 'required|numeric',
+//             'quantity' => 'required',
+//             'date_supplied' => 'required|date',
+//             'is_available' => 'required|boolean'
+//         ]);
 
-     // Handle the case where image upload fails
-     return redirect()->route('supplier.modelparts.addmodelparts')->with('error', 'Failed to upload image');
+//           // Handle the file upload
+//           if ($request->hasFile('image')) {
+//             $file = $request->file('image');
+//             $filename = $file->getClientOriginalName();
+//             $file->storeAs('public/modelparts_images', $filename);
+
+//             $validatedData['image'] = $filename;
+
+//             ModelParts::create($validatedData);
+
+//             // return redirect()->route('supplier.modelparts.addmodelparts')->with('Success', 'Model Part is added successfully');
+            
+//             // Redirect to a different route after successful addition
+//         return redirect()->route('supplier.modelparts.index')->with('success', 'Model Part added successfully');
+//     }
+
+//      // Handle the case where image upload fails
+//      return redirect()->route('supplier.modelparts.addmodelparts')->with('error', 'Failed to upload image');
 
     
-}
+// }
 }
 
     /**
