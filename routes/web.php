@@ -32,22 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-
-Route::resource('supplier/dashboard/modelparts', ModelPartsController::class)
-    ->only(['index'])
-    ->middleware(['auth', 'role:supplier']);
-
-    Route::get('supplier/dashboard/modelparts/search', [ModelPartsController::class, 'search'])
-    ->name('supplier.modelparts.search')
-    ->middleware(['auth', 'role:supplier']);
-
-    Route::get('supplier/dashboard/modelparts', [ModelPartsController::class, 'index'])
-    ->name('supplier.modelparts.index')
-    ->middleware(['auth', 'role:supplier']);
-
-  
+});  
 
 require __DIR__.'/auth.php';
 
@@ -59,7 +44,12 @@ Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.da
 Route::middleware(['auth','role:supplier'])->group(function () {
     Route::get('supplier/dashboard', [SupplierController::class, 'index'])->name('supplier.dashboard');
     Route::get('/supplier/search', [SupplierController::class, 'search'])->name('supplier.search');
-    // Route::get('supplier/dashboard', [ModelPartsController::class, 'index'])->only(['index', 'store']);
+    Route::get('supplier/dashboard/modelparts', [ModelPartsController::class, 'index'])->name('supplier.modelparts.index');
+    Route::get('supplier/dashboard/modelparts/search', [ModelPartsController::class, 'search'])->name('supplier.modelparts.search');  
+    Route::post('supplier/dashboard/modelparts', [ModelPartsController::class, 'store'])->name('supplier.modelparts.store');
+    Route::put('/supplier/modelparts/{id}', [ModelPartsController::class, 'update'])->name('supplier.modelparts.update');
+    Route::delete('/supplier/modelparts/{id}', [ModelPartsController::class, 'destroy'])->name('supplier.modelparts.destroy');
+
 });
 
 

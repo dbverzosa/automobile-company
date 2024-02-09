@@ -11,4 +11,6 @@ class ManufacturerController extends Controller
     {
         return view('manufacturer.dashboard');
     }
+
+    
 }

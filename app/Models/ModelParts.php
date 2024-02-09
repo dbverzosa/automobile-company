@@ -17,7 +17,7 @@ class ModelParts extends Model
         'price',
         'quantity',
         'date_supplied',
-        'is_available'
+        'is_available',
     ];
 
 
