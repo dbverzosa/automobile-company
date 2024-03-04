@@ -102,10 +102,8 @@
 
     <a href="{{ url('supplier/dashboard/modelparts') }}">Model Parts</a>
     
-    <a href="{{ url('supplier/dashboard/inventory') }}">Parts Inventory</a>
-    
-    <a href="{{ url('supplier/dashboard/sales') }}">Parts Sales</a>
-    
+    <a href="{{ url('supplier/dashboard/inventory-sales') }}">Sales & Inventory</a>
+ 
 <div>
     <form method="POST" action="{{ route('logout') }}">
         @csrf

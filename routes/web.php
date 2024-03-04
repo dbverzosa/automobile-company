@@ -6,7 +6,7 @@ use App\Http\Controllers\DealerPanel\DealerController;
 use App\Http\Controllers\ManufacturerPanel\ManufacturerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ManufacturerPanel\PurchaseModelPartController;
-use App\Http\Controllers\SupplierPanel\InventoryController;
+use App\Http\Controllers\SupplierPanel\InventorySalesController;
 use App\Http\Controllers\SupplierPanel\ModelPartsController;
 use App\Http\Controllers\SupplierPanel\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -49,10 +49,9 @@ Route::middleware(['auth','role:supplier'])->group(function () {
     Route::post('supplier/dashboard/modelparts', [ModelPartsController::class, 'store'])->name('supplier.modelparts.store');
     Route::put('/supplier/modelparts/{modelpart}', [ModelPartsController::class, 'update'])->name('supplier.modelparts.update');
     Route::delete('/supplier/modelparts/{id}', [ModelPartsController::class, 'destroy'])->name('supplier.modelparts.destroy');
-
-    //  route for the Parts Inventory
-    Route::get('supplier/dashboard/inventory', [InventoryController::class, 'index'])->name('supplier.inventory');
-    // Route::get('supplier/dashboard/inventory', [InventoryController::class, 'index'])->name('supplier.inventory');
+    // Inventory sales route
+    Route::get('supplier/dashboard/inventory-sales', [InventorySalesController::class, 'index'])->name('supplier.inventory_sales');
+    Route::get('supplier/dashboard/inventory-sales/sort/{sort}', [InventorySalesController::class, 'index'])->name('supplier.inventory_sales.sort');
 });
 
 
