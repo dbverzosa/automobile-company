@@ -100,11 +100,13 @@
     </div>
     <a href="{{ url('manufacturer/dashboard') }}">Dashboard </a>
 
-    <a href="{">Vehicles</a>
+    <a href="{{ url('manufacturer/dashboard/purchased-model-parts') }}">Purchased Model Parts</a>
+
+    <a href="{{ url('manufacturer/dashboard/vehicles') }}">Vehicles</a>
     
-    <a href="">Inventory</a>
+    <a href="{{ url('manufacturer/dashboard/inventory') }}">Car Inventory</a>
     
-    <a href="">Sales</a>
+    <a href="{{ url('manufacturer/dashboard/sales') }}">Car Sales</a>
     
 <div>
     <form method="POST" action="{{ route('logout') }}">

@@ -14,7 +14,7 @@ class SupplierController extends Controller
     {
 
         // Fetch all model parts
-        $modelParts = ModelParts::paginate(5);  // Change 10 to the desired number of items per page
+        $modelParts = ModelParts::paginate(9);  // Change to the desired number of items per page
         
         // Pass model parts data to the view
         return view('supplier.supplier-dashboard', ['model_parts' => $modelParts]);
@@ -46,7 +46,7 @@ class SupplierController extends Controller
         }
     
         // Execute the query and paginate the results
-        $modelParts = $query->paginate(5);
+        $modelParts = $query->paginate(9);
     
         // Append search parameters to pagination links
         $modelParts->appends($request->except('page'));

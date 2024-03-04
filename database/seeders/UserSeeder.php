@@ -13,6 +13,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        
         FacadesDB::table('users')->insert([
             [
                 'name' => 'Admin',
