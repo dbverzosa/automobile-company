@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminPanel\AdminController;
 use App\Http\Controllers\CustomerPanel\CustomerController;
 use App\Http\Controllers\DealerPanel\DealerController;
 use App\Http\Controllers\ManufacturerPanel\ManufacturerController;
+use App\Http\Controllers\ManufacturerPanel\ManufacturerVehicleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ManufacturerPanel\PurchaseModelPartController;
 use App\Http\Controllers\SupplierPanel\InventorySalesController;
@@ -62,6 +63,14 @@ Route::middleware(['auth','role:manufacturer'])->group(function () {
     Route::post('/manufacturer/dashboard/purchase-model-part/{id}', [PurchaseModelPartController::class, 'purchase'])->name('manufacturer.purchase');
     Route::get('/manufacturer/dashboard/purchased-model-parts', [PurchaseModelPartController::class, 'purchasedModelParts'])->name('manufacturer.purchasedModelParts');
     Route::get('/manufacturer/modelparts/search', [PurchaseModelPartController::class, 'search'])->name('manufacturer.modelparts.search');
+
+      // Route for manufacturer vehicles
+      Route::post('/manufacturer/dashboard/vehicles', [ManufacturerVehicleController::class, 'store'])->name('manufacturer.storeVehicle');
+
+      Route::get('/manufacturer/dashboard/vehicles', [ManufacturerVehicleController::class, 'index'])->name('manufacturer.vehicles.index');
+      Route::get('/manufacturer/dashboard/vehicles/{id}/edit', [ManufacturerVehicleController::class, 'editVehicle'])->name('manufacturer.editVehicle');
+      Route::put('/manufacturer/dashboard/vehicles/{id}', [ManufacturerVehicleController::class, 'updateVehicle'])->name('manufacturer.updateVehicle');
+      Route::delete('/manufacturer/dashboard/vehicles/{id}', [ManufacturerVehicleController::class, 'destroy'])->name('manufacturer.destroyVehicle');
 });
 
 
