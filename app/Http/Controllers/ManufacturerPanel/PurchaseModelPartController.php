@@ -74,6 +74,7 @@ class PurchaseModelPartController extends Controller
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Successfully purchased '.$quantity.' '.$modelPart->model_name.' for a total of '.$totalPrice.' Pesos ');
     }
+    
     public function search(Request $request)
     {
         $manufacturerId = Auth::id();

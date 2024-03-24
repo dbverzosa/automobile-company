@@ -24,6 +24,12 @@ class ManufacturerVehicle extends Model
        
     ];
 
+    public function inventory()
+    {
+        return $this->hasOne(ManufacturerVehicleInventory::class, 'vehicle_id');
+    }
+    
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -32,4 +38,21 @@ class ManufacturerVehicle extends Model
     {
         return $this->belongsTo(User::class, 'manufacturer_id');
     }
+
+        public function dealerInventories()
+    {
+        return $this->hasMany(DealerInventory::class);
+    }
+
+    public function decreaseQuantity($amount = 1)
+    {
+        $this->quantity -= $amount;
+        $this->save();
+    }
+
+    
+
+
+
+
 }

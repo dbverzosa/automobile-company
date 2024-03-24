@@ -45,6 +45,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ModelParts::class);
     }
+
+
+
 }
 
 
