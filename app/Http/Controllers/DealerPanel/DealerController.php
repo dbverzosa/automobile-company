@@ -212,6 +212,122 @@ class DealerController extends Controller
         return view('dealer.car-inventory', compact('vehicles'));
     }
 
-    
+    public function edit(Request $request, $id)
+{
+    // Find the vehicle by ID
+    $vehicle = DealerInventory::find($id);
+
+    // Check if the vehicle exists
+    if (!$vehicle) {
+        return redirect()->back()->with('error', 'Vehicle not found.');
+    }
+
+    // Check if the authenticated user is the owner of the vehicle
+    if ($vehicle->dealer_id !== auth()->id()) {
+        return redirect()->back()->with('error', 'You are not authorized to edit this vehicle.');
+    }
+
+    // Validate the request data
+    $request->validate([
+        'new_price' => 'required|numeric',
+        'post' => 'required|boolean',
+        'trend' => 'required|boolean',
+        'details' => 'nullable|string',
+    ]);
+
+    // Update the vehicle's details
+    $vehicle->new_price = $request->input('new_price');
+    $vehicle->post = $request->input('post');
+    $vehicle->trend = $request->input('trend');
+    $vehicle->details = $request->input('details');
+    $vehicle->save();
+
+    // Redirect back to the car inventory with a success message
+    return redirect()->route('dealer.carInventory')->with('success', 'Vehicle details updated successfully.');
+}
+public function carInventorySearch(Request $request)
+{
+    $dealerId = auth()->user()->id;
+
+    $searchTerm = $request->input('search-anything');
+    $postFilter = $request->input('quantity_filter');
+    $trendFilter = $request->input('trend_filter');
+
+    $query = DealerInventory::query()->where('dealer_id', $dealerId);
+
+    if ($searchTerm !== null && $searchTerm !== '') {
+        $query->whereHas('vehicle', function ($q) use ($searchTerm) {
+            $q->where('vin', 'like', '%' . $searchTerm . '%')
+              ->orWhere('brand', 'like', '%' . $searchTerm . '%')
+              ->orWhere('color', 'like', '%' . $searchTerm . '%')
+              ->orWhere('transmission', 'like', '%' . $searchTerm . '%')
+              ->orWhere('model', 'like', '%' . $searchTerm . '%');
+        });
+    }
+
+    if ($postFilter !== null && $postFilter !== '') {
+        if ($postFilter === '1') {
+            $query->where('post', true);
+        } elseif ($postFilter === '0') {
+            $query->where('post', false);
+        }
+    }
+
+    if ($trendFilter !== null && $trendFilter !== '') {
+        if ($trendFilter === '1') {
+            $query->where('trend', true);
+        } elseif ($trendFilter === '0') {
+            $query->where('trend', false);
+        }
+    }
+
+    $vehicles = $query->paginate(10);
+
+    return view('dealer.car-inventory', compact('vehicles'));
+}
+
+
+
+// public function carInventorySearch(Request $request)
+// {
+//     $dealerId = auth()->user()->id;
+
+//     $searchTerm = $request->input('search-anything');
+//     $postFilter = $request->input('quantity_filter');
+//     $trendFilter = $request->input('trend_filter');
+
+//     $query = DealerInventory::query()->where('dealer_id', $dealerId);
+
+//     if ($searchTerm !== null && $searchTerm !== '') {
+//         $query->whereHas('vehicle', function ($q) use ($searchTerm) {
+//             $q->where('vin', 'like', '%' . $searchTerm . '%')
+//               ->orWhere('brand', 'like', '%' . $searchTerm . '%')
+//               ->orWhere('color', 'like', '%' . $searchTerm . '%')
+//               ->orWhere('transmission', 'like', '%' . $searchTerm . '%')
+//               ->orWhere('model', 'like', '%' . $searchTerm . '%');
+//         });
+//     }
+
+//     if ($postFilter !== null && $postFilter !== '') {
+//         if ($postFilter === '1') {
+//             $query->where('post', true);
+//         } elseif ($postFilter === '0') {
+//             $query->where('post', false);
+//         }
+//     }
+
+//     if ($trendFilter !== null && $trendFilter !== '') {
+//         if ($trendFilter === '1') {
+//             $query->where('trend', true);
+//         } elseif ($trendFilter === '0') {
+//             $query->where('trend', false);
+//         }
+//     }
+
+//     $vehicles = $query->paginate(10);
+
+//     return view('dealer.car-inventory', compact('vehicles'));
+// }
+
     
 }

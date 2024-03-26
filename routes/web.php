@@ -95,4 +95,6 @@ Route::middleware(['auth', 'role:dealer'])->group(function () {
     Route::get('dealer/dashboard/car-inventory', [DealerController::class, 'carInventory'])->name('dealer.carInventory');
     Route::get('dealer/dashboard/purchased-vehicles', [DealerController::class, 'purchasedVehicles'])->name('dealer.purchasedVehicles');
     Route::get('dealer/dashboard/purchased-vehicles/search', [DealerController::class, 'purchasedVehiclesSearch'])->name('dealer.purchasedVehicles.search');
+    Route::get('dealer/dashboard/car-inventory/{id}/edit', [DealerController::class, 'edit'])->name('dealer.vehicles.edit');
+    Route::get('dealer/dashboard/car-inventory/search', [DealerController::class, 'carInventorySearch'])->name('dealer.car-inventory.search');
 });
