@@ -95,7 +95,7 @@
 <div class="container">
     {{-- <h1 class="featured-headings">Featured Vehicles</h1> --}}
 
-  <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="900" style="max-width: 800px; margin: 0 auto;">  <div class="carousel-indicators">
+  <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="1300" style="max-width: 800px; margin: 0 auto;">  <div class="carousel-indicators">
         @foreach($featuredVehicles as $key => $vehicle)
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}" aria-current="true" aria-label="Slide {{ $key }}"></button>
         @endforeach

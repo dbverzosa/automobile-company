@@ -38,11 +38,11 @@
 <nav class="navbar navbar-expand-lg bg-white" style="padding: 0;">
   <div class="container-fluid">
       <a class="navbar-brand" href="#">
-          <img src="path_to_your_logo_image" alt="Logo" height="30">
+          <img src="path_to_your_logo_image" alt="Logo" height="30" >
       </a>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 " >
         <li class="nav-item">
-          <a class="nav-link " href="{{ url('/') }}" role="button" aria-expanded="false" style="font-size: 0.8rem; padding: 0.25rem;">
+          <a class="nav-link " href="{{ url('/') }}" role="button" aria-expanded="false" style="font-size: 0.8rem; padding: 0.25rem; margin-left: 90px;">
       HOME
           </a>
         </li>
@@ -90,7 +90,7 @@
         <li class="nav-item">
             {{-- <a class="nav-link" style="font-weight: bold;" href="#">EXPLORE VEHICLES</a> --}}
         </li>
-        
+{{--         
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
               Brands
@@ -100,10 +100,31 @@
                   <li><a class="dropdown-item" href="#">{{ $brand }}</a></li>
               @endforeach
           </ul>
+      </li> --}}
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+              Brands
+          </a>
+          <ul class="dropdown-menu">
+              @foreach($allVehicles->pluck('vehicle.brand')->unique() as $brand)
+                  <li><a class="dropdown-item" href="{{ route('vehicles', ['brand' => $brand]) }}">{{ $brand }}</a></li>
+              @endforeach
+          </ul>
       </li>
-      
-      
       <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+            Models
+        </a>
+        <ul class="dropdown-menu">
+          @foreach($allVehicles->pluck('vehicle.model')->unique() as $model)
+                <li><a class="dropdown-item" href="{{ route('vehicles', ['model' => $model]) }}">{{ $model }}</a></li>
+            @endforeach
+        </ul>
+      </li>
+        
+      
+      {{-- <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
             Models
         </a>
@@ -112,7 +133,7 @@
                 <li><a class="dropdown-item" href="#">{{ $model }}</a></li>
             @endforeach
         </ul>
-    </li>
+    </li> --}}
       </ul>
       <ul class="navbar-nav">
         <li class="nav-item">
@@ -126,31 +147,81 @@
           <a class="nav-link" href="{{ url('/find-dealer') }}">Find a Dealer</a>
         </li>
       </ul>
-      @if (Route::has('login'))
+
+      @auth
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
-            Login as
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ route('login') }}">Customer</a></li>
-            <li><a class="dropdown-item" href="{{ route('login') }}">Dealer</a></li>
-            <li><a class="dropdown-item" href="{{ route('login') }}">Manufacturer</a></li>
-            <li><a class="dropdown-item" href="{{ route('login') }}">Supplier</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ route('login') }}">Admin</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          @if (Route::has('register'))
-          <a class="nav-link" href="{{ route('register') }}" role="button" aria-expanded="false">
-            Register 
-          </a>
-          @endif
-        
-        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('dashboard') }}" >Dashboard</a>
+      </li>
+      
+          <li class="nav-item dropdown" >
+              <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+                  {{ Auth::user()->name }}
+              </a>
+              <ul class="dropdown-menu">
+                  <li>
+                      <form action="{{ route('logout') }}" method="POST">
+                          @csrf
+                          <button type="submit" class="dropdown-item" >Logout</button>
+                      </form>
+                  </li>
+              </ul>
+          </li>
       </ul>
-      @endif
+@else
+    @if (Route::has('login'))
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+                    Login as
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Customer</a></li>
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Dealer</a></li>
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Manufacturer</a></li>
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Supplier</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Admin</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                @if (Route::has('register'))
+                    <a class="nav-link" href="{{ route('register') }}" role="button" aria-expanded="false">
+                        Register
+                    </a>
+                @endif
+            </li>
+        </ul>
+    @endif
+@endauth
+
+      {{-- @if (!Auth::check())
+        @if (Route::has('login'))
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+              Login as
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ route('login') }}">Customer</a></li>
+              <li><a class="dropdown-item" href="{{ route('login') }}">Dealer</a></li>
+              <li><a class="dropdown-item" href="{{ route('login') }}">Manufacturer</a></li>
+              <li><a class="dropdown-item" href="{{ route('login') }}">Supplier</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{{ route('login') }}">Admin</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            @if (Route::has('register'))
+            <a class="nav-link" href="{{ route('register') }}" role="button" aria-expanded="false">
+              Register 
+            </a>
+            @endif
+          
+          </li>
+        </ul>
+        @endif
+      @endif --}}
     </div>
   </div>
 </nav>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DealerInventory;
 use App\Models\ManufacturerVehicle;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -38,21 +39,6 @@ class PublicController extends Controller
         return view('customer.layout', compact('allVehicles'));
     }
 
-
-    // public function featuredCars()
-    // {
-
-    //      $allVehicles = DealerInventory::where('post', true)
-    //     ->with('vehicle')
-    //     ->paginate(9);
-
-    //     $featuredCars = DealerInventory::where('post', true)
-    //         ->where('trend', true)
-    //         ->with('vehicle')
-    //         ->get();
-
-    //     return view('customer.featured-cars', compact('allVehicles', 'featuredCars'));
-    // }
 
 
     public function featuredCars(Request $request)
@@ -146,26 +132,36 @@ class PublicController extends Controller
     }
 
 
-    // public function findDealer()
-    // {
 
-
-    //     return view('customer.find-dealer');
-    // }
-
-    
-    public function findDealer()
+        public function findDealer(Request $request)
     {
+        $query = User::where('role', 'dealer');
 
-         $allVehicles = DealerInventory::where('post', true)
-        ->with('vehicle')
-        ->paginate(9);
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
 
+        if ($request->filled('region')) {
+            $query->where('region', 'like', '%' . $request->input('region') . '%');
+        }
 
-        return view('customer.find-dealer', compact('allVehicles'));
+        if ($request->filled('city')) {
+            $query->where('city', 'like', '%' . $request->input('city') . '%');
+        }
+
+        if ($request->filled('manufacturing_plant')) {
+            $query->where('address', 'like', '%' . $request->input('manufacturing_plant') . '%');
+        }
+
+        $dealers = $query->paginate(9);
+
+        $allVehicles = DealerInventory::where('post', true)
+            ->with('vehicle')
+            ->paginate(9);
+
+        return view('customer.find-dealer', compact('allVehicles', 'dealers'));
     }
 
-    
 
 
 

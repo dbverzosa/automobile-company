@@ -5,7 +5,7 @@ namespace App\Http\Controllers\CustomerPanel;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
-
+use Illuminate\Support\Facades\Redirect;
 
 class CustomerController extends Controller
 {
@@ -20,7 +20,9 @@ class CustomerController extends Controller
         } elseif (Auth::user()->role === 'dealer') {
             return redirect()->route('dealer.dashboard');
         }
-        return view('dashboard');
+        // return view('dashboard');
+
+        return Redirect::to('/');
     }
 
     

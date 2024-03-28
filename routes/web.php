@@ -36,6 +36,8 @@ Route::get('/featured-cars', [PublicController::class, 'featuredCars'])->name('f
 Route::get('/vehicles', [PublicController::class, 'Vehicles']);
 Route::get('/vehicles/search', [PublicController::class, 'vehicles'])->name('vehicles.search');
 Route::get('/find-dealer', [PublicController::class, 'findDealer']);
+Route::get('/find-dealer/search', [PublicController::class, 'findDealer'])->name('customer.find-dealer');
+Route::get('/vehicles',  [PublicController::class, 'Vehicles'])->name('vehicles');
 
 
 
