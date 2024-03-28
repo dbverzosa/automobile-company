@@ -13,6 +13,7 @@ use App\Http\Controllers\ManufacturerPanel\ManufacturerSalesController;
 use App\Http\Controllers\ManufacturerPanel\ManufacturerVehicleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ManufacturerPanel\PurchaseModelPartController;
+use App\Http\Controllers\PublicController;
 use App\Http\Controllers\SupplierPanel\InventorySalesController;
 use App\Http\Controllers\SupplierPanel\ModelPartsController;
 use App\Http\Controllers\SupplierPanel\SupplierController;
@@ -29,11 +30,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [PublicController::class, 'browseAllVehicles']);
+Route::get('/featured-cars', [PublicController::class, 'featuredCars']);
+Route::get('/featured-cars', [PublicController::class, 'featuredCars'])->name('featuredCars.search');
+Route::get('/vehicles', [PublicController::class, 'Vehicles']);
+Route::get('/vehicles/search', [PublicController::class, 'vehicles'])->name('vehicles.search');
+Route::get('/find-dealer', [PublicController::class, 'findDealer']);
+
+
+
+Route::get('/layout', [PublicController::class, 'layout']);
+
+// Route::get('/', function () {
+//     return view('customer/dashboard');
+//     // return view('dashboard');
+// });
 
 Route::get('/dashboard', [CustomerController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
+
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -97,4 +113,5 @@ Route::middleware(['auth', 'role:dealer'])->group(function () {
     Route::get('dealer/dashboard/purchased-vehicles/search', [DealerController::class, 'purchasedVehiclesSearch'])->name('dealer.purchasedVehicles.search');
     Route::get('dealer/dashboard/car-inventory/{id}/edit', [DealerController::class, 'edit'])->name('dealer.vehicles.edit');
     Route::get('dealer/dashboard/car-inventory/search', [DealerController::class, 'carInventorySearch'])->name('dealer.car-inventory.search');
+
 });

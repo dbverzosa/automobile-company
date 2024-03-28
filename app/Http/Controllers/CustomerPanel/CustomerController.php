@@ -22,4 +22,6 @@ class CustomerController extends Controller
         }
         return view('dashboard');
     }
+
+    
 }

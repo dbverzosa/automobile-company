@@ -288,6 +288,11 @@ public function carInventorySearch(Request $request)
 
 
 
+}
+
+
+
+
 // public function carInventorySearch(Request $request)
 // {
 //     $dealerId = auth()->user()->id;
@@ -328,6 +333,3 @@ public function carInventorySearch(Request $request)
 
 //     return view('dealer.car-inventory', compact('vehicles'));
 // }
-
-    
-}

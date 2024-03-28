@@ -21,7 +21,7 @@
 
 
 </style>
-<h1>Car Inventory</h1>
+<h1 >Car Inventory</h1>
 <form action="{{ route('dealer.car-inventory.search') }}" method="GET" class="d-flex justify-content-between align-items-center" id="filter-form">
     <div class="input-group mb-3">
         <input type="text" class="form-control" placeholder="Search anything" name="search-anything" value="">
@@ -62,10 +62,10 @@
             <th>Action</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody >
         @foreach($vehicles as $vehicle)
-        <tr>
-            <td>{{ $loop->index + 1 }}</td>
+        <tr >
+            <td >{{ $loop->index + 1 }}</td>
             <td><img src="{{ asset('storage/vehicles_images/' .$vehicle->vehicle->image) }}" alt="Vehicle Image" class="vehicle-image"></td>
             <td>{{ $vehicle->vehicle->vin }}</td>
             <td>{{ $vehicle->vehicle->brand }}</td>
@@ -137,6 +137,7 @@
         @endforeach
     </tbody>
 </table>
+{{-- 
 <div style="text-align: center;">
     <div style="display: inline-block; margin-top: 20px;">
         <ul class="pagination" style="margin: 0; padding: 0;">
@@ -173,7 +174,7 @@
     <p style="text-align: center; margin-top: 10px;">
         Showing {{ $vehicles->firstItem() }} to {{ $vehicles->lastItem() }} of {{ $vehicles->total() }} entries
     </p>
-</div>
+</div> --}}
 
 
 

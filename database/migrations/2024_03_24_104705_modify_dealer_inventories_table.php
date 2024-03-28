@@ -26,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('dealer_inventories', function (Blueprint $table) {
-            $table->date('date_purchased');
+            $table->date('date_purchased')->nullable();
             $table->dropColumn('post');
             $table->dropColumn('trend');
             $table->dropColumn('new_price');
