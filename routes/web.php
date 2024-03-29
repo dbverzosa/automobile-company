@@ -53,6 +53,16 @@ Route::get('/dashboard', [CustomerController::class, 'dashboard'])->middleware([
 
 
 
+Route::middleware(['auth', 'role:customer'])->group(function () {
+Route::post('/vehicles/buy', [CustomerController::class, 'buy'])->name('vehicles.buy');
+Route::get('/customer-purchased', [CustomerController::class, 'customerPurchased'])->name('customer-purchased');
+Route::get('/customer-purchased/search', [CustomerController::class, 'customerPurchased'])->name('customer.search');
+});
+
+
+
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -115,5 +125,9 @@ Route::middleware(['auth', 'role:dealer'])->group(function () {
     Route::get('dealer/dashboard/purchased-vehicles/search', [DealerController::class, 'purchasedVehiclesSearch'])->name('dealer.purchasedVehicles.search');
     Route::get('dealer/dashboard/car-inventory/{id}/edit', [DealerController::class, 'edit'])->name('dealer.vehicles.edit');
     Route::get('dealer/dashboard/car-inventory/search', [DealerController::class, 'carInventorySearch'])->name('dealer.car-inventory.search');
+    Route::get('dealer/dashboard/vehicle-sales', [DealerController::class, 'sales'])->name('dealer.sales');
+    Route::get('/dealer/dashboard/vehicle-sales/search', [DealerController::class, 'sales'])->name('dealer.sales');
+    Route::put('dealer/dashboard/vehicle-sales{id}', [DealerController::class, 'update'])->name('dealer.update');
+   
 
 });

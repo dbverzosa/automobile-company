@@ -3,7 +3,7 @@
 namespace App\Models;
 use App\Models\User;
 use App\Models\ManufacturerVehicle;
-
+use App\Models\CustomerReservation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,4 +36,10 @@ class DealerInventory extends Model
     {
         return $this->belongsTo(ManufacturerVehicle::class, 'manufacturer_vehicle_id');
     }
+
+    public function customerReservations()
+{
+    return $this->hasMany(CustomerReservation::class, 'manufacturer_vehicle_id', 'manufacturer_vehicle_id');
+}
+
 }

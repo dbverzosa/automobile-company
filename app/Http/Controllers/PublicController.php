@@ -19,6 +19,7 @@ class PublicController extends Controller
             ->get();
 
         $allVehicles = DealerInventory::where('post', true)
+            // ->where('trend', true)
             ->with('vehicle')
             ->paginate(9);
 
@@ -72,7 +73,12 @@ class PublicController extends Controller
 
     public function vehicles(Request $request)
     {
-        $query = DealerInventory::where('post', true)->with('vehicle');
+        $query = DealerInventory::where('post', true)
+        ->whereDoesntHave('vehicle.customerReservations', function ($q) {
+            $q->where('is_pending', false);
+        })
+        ->with('vehicle');
+
         
         if ($request->filled('model')) {
             $query->whereHas('vehicle', function ($q) use ($request) {

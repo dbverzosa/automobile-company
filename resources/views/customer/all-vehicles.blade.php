@@ -107,6 +107,13 @@
         </form>
     </div> --}}
 
+        @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+
     <div class="featured-heading">
         <form class="d-flex" role="search" action="{{ route('vehicles.search') }}" method="GET">
             <select class="form-select me-2" aria-label="Brand" name="brand">
@@ -165,16 +172,123 @@
                     @endif
                     <p class="card-text"><strong>Dealer:</strong> {{ $vehicle->dealer->name }}</p>
                     <p class="card-text"><strong>Contact No.:</strong> {{ $vehicle->dealer->phone_number }}</p>
+                    <p  class="card-text"><strong>Address:</strong> {{ $vehicle->dealer->region }}, {{ $vehicle->dealer->city }} City, {{ $vehicle->dealer->address }}</p>
+
                 </div>
-                <div class="card-footer bg-transparent">
-                    <a href="#" class="btn btn-success btn-sm">Reserve</a>
-                    <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#vehicleModal{{ $key }}">View Details </a>
-                    <a href="#" class="btn btn-danger btn-sm">Buy</a>
-                  </div>
+                <div class="card-footer bg-transparent d-flex justify-content-between">
+                    {{-- <a href="#" class="btn btn-success btn-sm" 
+                        @if(Auth::check() && Auth::user()->role === 'customer')
+                            data-bs-toggle="modal" data-bs-target="#reserveConfirmationModal"
+                        @else
+                            data-bs-toggle="modal" data-bs-target="#loginRequiredModal"
+                        @endif
+                    >
+                        Reserve
+                    </a> --}}
+                        <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#vehicleModal{{ $key }}">View Details </a>
+                        <a href="#" class="btn btn-danger btn-sm" 
+                        @if(Auth::check() && Auth::user()->role === 'customer')
+                            data-bs-toggle="modal" data-bs-target="#buyConfirmationModal{{ $key }}"
+                        @else
+                            data-bs-toggle="modal" data-bs-target="#loginRequiredModal"
+                        @endif
+                    >
+                        Buy
+                    </a>
+                    
+                </div>
             </div>
         </div>
 
-         <!-- Modal -->
+                <!-- Modal for buying -->
+                <div class="modal fade" id="buyConfirmationModal{{ $key }}" tabindex="-1" aria-labelledby="buyConfirmationModalLabel{{ $key }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="buyConfirmationModalLabel{{ $key }}">Confirm Buy</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <strong><p class="text-center" style="color:red">Are you sure you want to buy this item?</p></strong>
+                                <h6>Vehicle Details:</h6>
+                                <p><strong>Brand:</strong> {{ $vehicle->vehicle->brand }}</p>
+                                <p><strong>Model:</strong> {{ $vehicle->vehicle->model }}</p>
+                                <hr>
+                                <form method="POST" action="{{ route('vehicles.buy') }}">
+                                    @csrf
+                                    <input type="hidden" name="manufacturer_vehicle_id" value="{{ $vehicle->vehicle->id }}">
+                                    <div class="mb-3">
+                                        <label for="gender{{ $key }}" class="form-label">Birth Gender</label>
+                                        <select class="form-select" id="gender{{ $key }}" name="gender" required>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="income{{ $key }}" class="form-label">Income</label>
+                                        <input type="text" class="form-control" id="income{{ $key }}" name="income" required pattern="\d+(\.\d{2})?" placeholder="Please enter a numeric value (e.g., 1000 or 1000.00) in Peso ">
+                                        <div class="invalid-feedback">Income must be a number.</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="details{{ $key }}" class="form-label">Details</label>
+                                        <textarea class="form-control" id="details{{ $key }}" rows="3" placeholder="Enter Additional Details" name="details" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="address{{ $key }}" class="form-label">Address</label>
+                                        <input type="text" class="form-control" id="address{{ $key }}" placeholder="Enter Address Details" name="delivery_address" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Confirm Buying</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <a href="#" class="btn btn-danger">Buy</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {{-- <!-- Modal for reserving-->
+        <div class="modal fade" id="reserveConfirmationModal" tabindex="-1" aria-labelledby="reserveConfirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reserveConfirmationModalLabel">Confirm Reserve</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to reserve this item?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="#" class="btn btn-success">Reserve</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+ --}}
+
+        <!-- Modal if user is not a customer-->
+        <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="loginRequiredModalLabel">Login Required</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Please log in first before proceeding.
+                    </div>
+                    <div class="modal-footer">
+                        <button href="{{ url('/vehicles') }}" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+
+         <!-- Modal for viewing the details-->
          <div class="modal fade" id="vehicleModal{{ $key }}" tabindex="-1" aria-labelledby="vehicleModalLabel{{ $key }}" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -193,17 +307,15 @@
                         <p><strong>Color:</strong> {{ $vehicle->vehicle->color }}</p>
                         <p><strong>Transmission:</strong> {{ $vehicle->vehicle->transmission }}</p>
                         <p><strong>Engine:</strong> {{ $vehicle->vehicle->engine }}</p>
-
-
                         <p><strong>Manufacturing Plant:</strong> {{ $vehicle->vehicle->manufacturing_plant }}</p>
-
                         <p><strong>Dealer:</strong> {{ $vehicle->dealer->name }}</p>
                         <p><strong>Contact No.:</strong> {{ $vehicle->dealer->phone_number }}</p>
+                        <p><strong>Address:</strong> {{ $vehicle->dealer->region }}, {{ $vehicle->dealer->city }} City, {{ $vehicle->dealer->address }}</p>
 
                     </div>
                     <div class="modal-footer d-flex justify-content-center">
-                      <a href="#" class="btn btn-success btn-sm mx-2">Reserve</a>
-                      <a href="#" class="btn btn-danger btn-sm mx-2">Buy</a>
+                      {{-- <a href="#" class="btn btn-success btn-sm mx-2">Reserve</a>
+                      <a href="#" class="btn btn-danger btn-sm mx-2">Buy</a> --}}
                       <button type="button" class="btn btn-secondary btn-sm mx-2" data-bs-dismiss="modal">Close</button>
                   </div>
                   

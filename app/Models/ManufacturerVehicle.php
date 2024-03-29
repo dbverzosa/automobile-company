@@ -50,6 +50,11 @@ class ManufacturerVehicle extends Model
         $this->save();
     }
 
+    public function customerReservations()
+    {
+        return $this->hasMany(CustomerReservation::class, 'vehicle_id');
+    }
+
     
 
 

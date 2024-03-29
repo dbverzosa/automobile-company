@@ -147,7 +147,7 @@
           <a class="nav-link" href="{{ url('/find-dealer') }}">Find a Dealer</a>
         </li>
       </ul>
-
+{{-- 
       @auth
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item">
@@ -193,7 +193,60 @@
             </li>
         </ul>
     @endif
+@endauth --}}
+
+@auth
+    @if(Auth::user()->role === 'customer')
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url('customer-purchased') }}">Dashboard</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+                    {{ Auth::user()->name }}
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    @else
+        <script>window.location = "{{ route('login') }}";</script>
+    @endif
 @endauth
+
+@if (!Auth::check())
+    @if (Route::has('login'))
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+                    Login as
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Customer</a></li>
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Dealer</a></li>
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Manufacturer</a></li>
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Supplier</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{{ route('login') }}">Admin</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                @if (Route::has('register'))
+                    <a class="nav-link" href="{{ route('register') }}" role="button" aria-expanded="false">
+                        Register
+                    </a>
+                @endif
+            </li>
+        </ul>
+    @endif
+@endif
+
 
       {{-- @if (!Auth::check())
         @if (Route::has('login'))

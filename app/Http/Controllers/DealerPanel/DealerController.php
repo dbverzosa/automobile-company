@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\DealerPanel;
 
 use App\Http\Controllers\Controller;
+use App\Models\CustomerReservation;
 use App\Models\DealerInventory;
 use App\Models\DealerPurchaseVehicle;
 use App\Models\ManufacturerSale;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\ManufacturerVehicle;
 use App\Models\ManufacturerVehicleInventory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -204,90 +206,287 @@ class DealerController extends Controller
     {
         // Get the authenticated dealer's ID
         $dealerId = auth()->user()->id;
-    
+
         // Get all vehicles from the dealer's inventory
         $vehicles = DealerInventory::where('dealer_id', $dealerId)->with('vehicle')->get();
-    
+
         // Pass the data to the view
         return view('dealer.car-inventory', compact('vehicles'));
     }
 
     public function edit(Request $request, $id)
-{
-    // Find the vehicle by ID
-    $vehicle = DealerInventory::find($id);
+    {
+        // Find the vehicle by ID
+        $vehicle = DealerInventory::find($id);
 
-    // Check if the vehicle exists
-    if (!$vehicle) {
-        return redirect()->back()->with('error', 'Vehicle not found.');
+        // Check if the vehicle exists
+        if (!$vehicle) {
+            return redirect()->back()->with('error', 'Vehicle not found.');
+        }
+
+        // Check if the authenticated user is the owner of the vehicle
+        if ($vehicle->dealer_id !== auth()->id()) {
+            return redirect()->back()->with('error', 'You are not authorized to edit this vehicle.');
+        }
+
+        // Validate the request data
+        $request->validate([
+            'new_price' => 'required|numeric',
+            'post' => 'required|boolean',
+            'trend' => 'required|boolean',
+            'details' => 'nullable|string',
+        ]);
+
+        // Update the vehicle's details
+        $vehicle->new_price = $request->input('new_price');
+        $vehicle->post = $request->input('post');
+        $vehicle->trend = $request->input('trend');
+        $vehicle->details = $request->input('details');
+        $vehicle->save();
+
+        // Redirect back to the car inventory with a success message
+        return redirect()->route('dealer.carInventory')->with('success', 'Vehicle details updated successfully.');
     }
 
-    // Check if the authenticated user is the owner of the vehicle
-    if ($vehicle->dealer_id !== auth()->id()) {
-        return redirect()->back()->with('error', 'You are not authorized to edit this vehicle.');
+
+    public function carInventorySearch(Request $request)
+    {
+        $dealerId = auth()->user()->id;
+
+        $searchTerm = $request->input('search-anything');
+        $postFilter = $request->input('quantity_filter');
+        $trendFilter = $request->input('trend_filter');
+
+        $query = DealerInventory::query()->where('dealer_id', $dealerId);
+
+        if ($searchTerm !== null && $searchTerm !== '') {
+            $query->whereHas('vehicle', function ($q) use ($searchTerm) {
+                $q->where('vin', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('brand', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('color', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('transmission', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('model', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        if ($postFilter !== null && $postFilter !== '') {
+            if ($postFilter === '1') {
+                $query->where('post', true);
+            } elseif ($postFilter === '0') {
+                $query->where('post', false);
+            }
+        }
+
+        if ($trendFilter !== null && $trendFilter !== '') {
+            if ($trendFilter === '1') {
+                $query->where('trend', true);
+            } elseif ($trendFilter === '0') {
+                $query->where('trend', false);
+            }
+        }
+
+        $vehicles = $query->paginate(10);
+
+        return view('dealer.car-inventory', compact('vehicles'));
     }
 
-    // Validate the request data
-    $request->validate([
-        'new_price' => 'required|numeric',
-        'post' => 'required|boolean',
-        'trend' => 'required|boolean',
-        'details' => 'nullable|string',
-    ]);
 
-    // Update the vehicle's details
-    $vehicle->new_price = $request->input('new_price');
-    $vehicle->post = $request->input('post');
-    $vehicle->trend = $request->input('trend');
-    $vehicle->details = $request->input('details');
-    $vehicle->save();
 
-    // Redirect back to the car inventory with a success message
-    return redirect()->route('dealer.carInventory')->with('success', 'Vehicle details updated successfully.');
-}
-public function carInventorySearch(Request $request)
-{
-    $dealerId = auth()->user()->id;
 
-    $searchTerm = $request->input('search-anything');
-    $postFilter = $request->input('quantity_filter');
-    $trendFilter = $request->input('trend_filter');
+    //     public function sales()
+    // {
+    //     $dealerId = auth()->user()->id;
 
-    $query = DealerInventory::query()->where('dealer_id', $dealerId);
+    //     $purchasedVehicles = CustomerReservation::where('dealer_id', $dealerId)->get();
 
-    if ($searchTerm !== null && $searchTerm !== '') {
-        $query->whereHas('vehicle', function ($q) use ($searchTerm) {
-            $q->where('vin', 'like', '%' . $searchTerm . '%')
-              ->orWhere('brand', 'like', '%' . $searchTerm . '%')
-              ->orWhere('color', 'like', '%' . $searchTerm . '%')
-              ->orWhere('transmission', 'like', '%' . $searchTerm . '%')
-              ->orWhere('model', 'like', '%' . $searchTerm . '%');
-        });
-    }
+    //     return view('dealer.dealer-sales', compact('purchasedVehicles'));
+    // }
 
-    if ($postFilter !== null && $postFilter !== '') {
-        if ($postFilter === '1') {
-            $query->where('post', true);
-        } elseif ($postFilter === '0') {
-            $query->where('post', false);
+    // public function sales(Request $request)
+    // {
+    //     $dealerId = auth()->user()->id;
+
+    //     $query = CustomerReservation::where('dealer_id', $dealerId);
+
+    //     // Apply filters based on the request parameters
+
+    //     $filter = $request->input('filter');
+
+    //     if ($filter) {
+    //         $search = $request->input('search');
+    //         $query->where(function ($q) use ($search) {
+    //             $q->where('name', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('gender', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('date_purchased', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('date_delivered', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('vin', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('income', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('delivery_address', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('details', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('id', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('phone_number', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('is_pending', 'LIKE', '%' . $search . '%')
+    //                 ;
+    //         });
+    //     }
+
+
+    //     if ($request->has('status-filter')) {
+    //         $query->where('is_pending', $request->input('status-filter'));
+    //     }
+
+    //     if ($request->has('date-filter')) {
+    //         if ($request->input('date-filter') === 'oldest') {
+    //             $query->orderBy('date_purchased');
+    //         } elseif ($request->input('date-filter') === 'newest') {
+    //             $query->orderByDesc('date_purchased');
+    //         }
+    //     }
+
+    //     $purchasedVehicles = $query->get();
+
+    //     return view('dealer.dealer-sales', compact('purchasedVehicles'));
+    // }
+
+
+
+    // public function sales(Request $request)
+    // {
+    //     $query = CustomerReservation::query()->with('manufacturerVehicle');
+
+    //     // Apply search filter
+    //     if ($request->filled('name')) {
+    //         $name = $request->input('name');
+    //         $query->where(function ($q) use ($name) {
+    //             $q->whereHas('customer', function ($q) use ($name) {
+    //                 $q->where('name', 'like', "%$name%")
+    //                     ->orWhere('phone_number', 'like', "%$name%")
+    //                     ->orWhere('delivery_address', 'like', "%$name%")
+    //                     ->orWhere('gender', 'like', "%$name%");
+    //             })
+    //             ->orWhereHas('manufacturerVehicle', function ($q) use ($name) {
+    //                 $q->where('vin', 'like', "%$name%")
+    //                 ->orWhere('brand', 'like',  "%$name%")
+    //                 ->orWhere('color', 'like', "%$name%")
+    //                 ->orWhere('transmission', 'like', "%$name%")
+    //                 ->orWhere('engine', 'like', "%$name%")
+    //                 ->orWhere('model', 'like', "%$name%");
+    //             })
+    //             ->orWhere('date_purchased', 'like', "%$name%")
+    //             ->orWhere('date_delivered', 'like', "%$name%")
+    //             ->orWhere('income', 'like', "%$name%")
+    //             ->orWhere('details', 'like', "%$name%")
+    //             ->orWhere('price', 'like', "%$name%")
+    //             ->orWhere('id', 'like', "%$name%")
+    //             ->orWhere(function ($q) use ($name) {
+    //                 if ($name === 'pending' || $name === 'confirmed') {
+    //                     $q->where('is_pending', $name === 'pending');
+    //                 }
+    //             });
+    //         });
+    //     }
+
+
+    //     // Apply status filter
+    //     if ($request->filled('status-filter')) {
+    //         $query->where('is_pending', $request->input('status-filter'));
+    //     }
+
+    //     // Apply date filter
+    //     if ($request->filled('date-filter')) {
+    //         if ($request->input('date-filter') === 'oldest') {
+    //             $query->orderBy('date_purchased');
+    //         } elseif ($request->input('date-filter') === 'newest') {
+    //             $query->orderByDesc('date_purchased');
+    //         }
+    //     }
+
+    //     $purchasedVehicles = $query->paginate(10);
+
+    //     return view('dealer.dealer-sales', compact('purchasedVehicles'));
+    // }
+
+
+
+
+    public function sales(Request $request)
+    {
+        try {
+            $query = CustomerReservation::query()->with('manufacturerVehicle');
+
+            // Apply search filter
+            if ($request->filled('name')) {
+                $name = $request->input('name');
+                $query->where(function ($q) use ($name) {
+                    $q->whereHas('customer', function ($q) use ($name) {
+                        $q->where('name', 'like', "%$name%")
+                            ->orWhere('phone_number', 'like', "%$name%")
+                            ->orWhere('delivery_address', 'like', "%$name%")
+                            ->orWhere('gender', 'like', "%$name%");
+                    })
+                        ->orWhereHas('manufacturerVehicle', function ($q) use ($name) {
+                            $q->where('vin', 'like', "%$name%")
+                                ->orWhere('brand', 'like',  "%$name%")
+                                ->orWhere('color', 'like', "%$name%")
+                                ->orWhere('transmission', 'like', "%$name%")
+                                ->orWhere('engine', 'like', "%$name%")
+                                ->orWhere('model', 'like', "%$name%");
+                        })
+                        ->orWhere('date_purchased', 'like', "%$name%")
+                        ->orWhere('date_delivered', 'like', "%$name%")
+                        ->orWhere('income', 'like', "%$name%")
+                        ->orWhere('details', 'like', "%$name%")
+                        ->orWhere('price', 'like', "%$name%")
+                        ->orWhere('id', 'like', "%$name%")
+                        ->orWhere(function ($q) use ($name) {
+                            if ($name === 'pending' || $name === 'confirmed') {
+                                $q->where('is_pending', $name === 'pending');
+                            }
+                        });
+                });
+            }
+
+            // Apply status filter
+            if ($request->filled('status-filter')) {
+                $query->where('is_pending', $request->input('status-filter'));
+            }
+
+            // Apply date filter
+            if ($request->filled('date-filter')) {
+                if ($request->input('date-filter') === 'oldest') {
+                    $query->orderBy('date_purchased');
+                } elseif ($request->input('date-filter') === 'newest') {
+                    $query->orderByDesc('date_purchased');
+                }
+            }
+
+            $purchasedVehicles = $query->paginate(10);
+
+            if ($purchasedVehicles->isEmpty()) {
+                throw new ModelNotFoundException();
+            }
+
+            return view('dealer.dealer-sales', compact('purchasedVehicles'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('dealer.sales')->with('error', 'No results found.');
         }
     }
 
-    if ($trendFilter !== null && $trendFilter !== '') {
-        if ($trendFilter === '1') {
-            $query->where('trend', true);
-        } elseif ($trendFilter === '0') {
-            $query->where('trend', false);
-        }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'is_pending' => 'required|boolean',
+            'date_delivered' => 'nullable|date',
+        ]);
+
+        $vehicle = CustomerReservation::findOrFail($id);
+        $vehicle->is_pending = $request->input('is_pending');
+        $vehicle->date_delivered = $request->input('date_delivered');
+        $vehicle->save();
+
+        return redirect()->back()->with('success', 'Vehicle details updated successfully');
     }
-
-    $vehicles = $query->paginate(10);
-
-    return view('dealer.car-inventory', compact('vehicles'));
-}
-
-
-
 }
 
 

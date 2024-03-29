@@ -50,7 +50,7 @@
     
     </div> 
  
- <div class="row">
+ {{-- <div class="row">
     @foreach($dealers as $dealer)
     <div class="col-md-4">
         <div class="card mt-3">
@@ -58,28 +58,80 @@
             <strong><p class="text-start ms-3">Contact No.: {{ $dealer->phone_number }}</p></strong>
             <strong><p class="text-start ms-3">Address: {{ $dealer->region }}, {{ $dealer->city }} City, {{ $dealer->address }}</p></strong>
             <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">View Sell Vehicles</a>
+            
+            <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Please log in to view sell vehicles.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     @endforeach
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div> --}}
+<div class="row">
+    @foreach($dealers as $dealer)
+    <div class="col-md-4">
+        <div class="card mt-3">
+            <strong><p class="text-start ms-3 mt-3">Dealer Name: {{ $dealer->name }}</p></strong>
+            <strong><p class="text-start ms-3">Contact No.: {{ $dealer->phone_number }}</p></strong>
+            <strong><p class="text-start ms-3">Address: {{ $dealer->region }}, {{ $dealer->city }} City, {{ $dealer->address }}</p></strong>
+            @auth
+            <!-- Authenticated modal -->
+            <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#sellVehiclesModal{{ $dealer->id }}">View Sell Vehicles</a>
+            <div class="modal fade" id="sellVehiclesModal{{ $dealer->id }}" tabindex="-1" aria-labelledby="sellVehiclesModalLabel{{ $dealer->id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="sellVehiclesModalLabel{{ $dealer->id }}">Sell Vehicles</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Add your content here -->
+                            You can view the sell vehicles for {{ $dealer->name }}.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <!-- Add any actions you want to include -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                Please log in to view sell vehicles.
+            @else
+            <!-- Default modal for unauthenticated users -->
+            <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">View Sell Vehicles</a>
+            <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Please log in to view sell vehicles.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
-            </div>
+            @endauth
         </div>
     </div>
+    @endforeach
 </div>
 
 
