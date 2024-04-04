@@ -35,8 +35,10 @@
 </style>
 
 <div class="container">
-    <h1 class="featured-heading">Sales Vehicles</h1>
+    <h1 class="featured-heading">FINAL Sales Vehicles</h1>
     <div class="row justify-content-center mt-3 mb-3">
+        <a class="text-center mb-3" href="{{ url('/dealer/dashboard/vehicle-sales/track-sales') }}"><button class="btn btn-outline-success me-2" type="button">Track Sales</button></a>
+
         <div class="col-md-12">
             <form class="d-flex justify-content-center" role="search" action="{{ route('dealer.sales') }}" method="GET">
                 <input class="form-control me-2" style="width: 2in;" type="search" placeholder="Search" aria-label="Name" name="name">
@@ -58,7 +60,9 @@
                 <button class="btn btn-outline-success me-2" type="submit">Search</button>
             
                 <a href="{{ url('/dealer/dashboard/vehicle-sales') }}"><button class="btn btn-outline-success me-2" type="button">Show</button></a>
+
             </form>
+
             
             
         </div>

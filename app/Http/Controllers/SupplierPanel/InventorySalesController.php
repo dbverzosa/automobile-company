@@ -12,15 +12,14 @@ class InventorySalesController extends Controller
 
     public function index(Request $request)
     {
-        // Get the logged-in user's ID
+        // get ang logged-in user's ID which sa kani na case kay supplier
         $userId = Auth::id();
     
-        // Fetch the inventory sales data for the specific user's model parts
+        // e fetch ang inventory sales data for the specific user's model parts
         $query = InventorySales::whereHas('modelPart', function ($query) use ($userId) {
             $query->where('user_id', $userId);
         });
     
-        // Apply sorting based on the request
         if ($request->filled('sort')) {
             if ($request->input('sort') == 'desc') {
                 $query->orderBy('total_sales', 'desc');
@@ -29,7 +28,6 @@ class InventorySalesController extends Controller
             }
         }
     
-        // Apply sorting based on the top sold quantity request
         if ($request->filled('top_sold')) {
             if ($request->input('top_sold') == 'desc') {
                 $query->orderBy('sold_quantity', 'desc');
@@ -38,7 +36,7 @@ class InventorySalesController extends Controller
             }
         }
     
-        $inventorySales = $query->paginate(10); // Change 10 to the desired number of items per page
+        $inventorySales = $query->paginate(10); 
     
         return view('supplier.inventory-sales', compact('inventorySales'));
     }

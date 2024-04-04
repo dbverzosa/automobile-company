@@ -13,25 +13,24 @@ class SupplierController extends Controller
     public function index()
     {
 
-        // Fetch all model parts
-        $modelParts = ModelParts::paginate(9);  // Change to the desired number of items per page
+        // fetch all model parts with pagination
+        $modelParts = ModelParts::paginate(9);  
         
-        // Pass model parts data to the view
+        // return dayon sa view with passed model parts data 
         return view('supplier.supplier-dashboard', ['model_parts' => $modelParts]);
     }
     
     public function search(Request $request): View
     {
-        // Retrieve search parameters from the request
+        // retrieve search parameters gikan sa request
         $search = $request->input('search');
         $minPrice = $request->input('min_price');
         $maxPrice = $request->input('max_price');
         $availability = $request->input('availability');
     
-        // Start building the query
+        // start sa query
         $query = ModelParts::query();
     
-        // Add conditions based on search parameters
         if ($search) {
             $query->where('model_name', 'like', '%' . $search . '%');
         }
@@ -45,13 +44,13 @@ class SupplierController extends Controller
             $query->where('is_available', (bool) $availability);
         }
     
-        // Execute the query and paginate the results
+        // execute dayon sa query then paginate ang results
         $modelParts = $query->paginate(9);
     
-        // Append search parameters to pagination links
+        // append dayon ang search parameters to pagination links
         $modelParts->appends($request->except('page'));
     
-        // Return the view with search results
+        // return the view with search results
         return view('supplier.supplier-dashboard', ['model_parts' => $modelParts]);
     }
 

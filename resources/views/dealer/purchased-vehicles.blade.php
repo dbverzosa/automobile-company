@@ -2,12 +2,16 @@
 
 @section('dealer')
 <style>
+ body {
+        margin: 0;
+        padding: 0;
+    }
     table {
         width: 100%;
         border-collapse: collapse;
     }
     th, td {
-        padding: 8px;
+        padding: 2px;
         text-align: left;
         font-size: 15px;
         border-bottom: 1px solid #ddd;
@@ -18,7 +22,8 @@
         max-height: 100px;
     }
 </style>
-<div>
+<body>
+<div class="container">
     <h1>Purchased Vehicles from Manufacturer</h1>
 
     <form action="{{ route('dealer.purchasedVehicles.search') }}" method="GET">
@@ -68,3 +73,4 @@
     </table>
 </div>
 @endsection
+</body>

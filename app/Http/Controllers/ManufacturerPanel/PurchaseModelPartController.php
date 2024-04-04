@@ -12,13 +12,13 @@ class PurchaseModelPartController extends Controller
 {
     public function purchasedModelParts()
     {
-        // Get the logged-in user's ID
+        // pag get sa logged-in user's ID mga manufacturer
         $manufacturerId = Auth::id();
 
-        // Paginate the purchased model parts for the logged-in user
+        // e paginate dayon ang purchased model parts for the logged-in user
         $purchasedModelParts = PurchaseModelParts::where('manufacturer_id', $manufacturerId)->paginate(5);
 
-        // Return the view with the purchased model parts data
+        // return sa view with the purchased model parts data
         return view('manufacturer.purchased-model-parts', ['purchasedModelParts' => $purchasedModelParts]);
     }
 
@@ -26,16 +26,16 @@ class PurchaseModelPartController extends Controller
     {
         $modelPart = ModelParts::findOrFail($id);
 
-        // Validate the request
+        // validate ang request
         $request->validate([
             'quantity' => 'required|integer|min:1|max:'.$modelPart->quantity,
         ]);
 
-        // Process the purchase
+        // process the purchase
         $quantity = $request->input('quantity');
         $totalPrice = $modelPart->price * $quantity;
 
-        // Save the purchase details to the PurchaseModelParts table
+        // save dayon ang purchase details to the PurchaseModelParts table
         $purchaseModelPart = new PurchaseModelParts();
         $purchaseModelPart->model_id = $modelPart->id;
         $purchaseModelPart->supplier_id = $modelPart->user_id;
@@ -47,17 +47,17 @@ class PurchaseModelPartController extends Controller
         $purchaseModelPart->date_purchased = now();
         $purchaseModelPart->save();
 
-        // Update the available quantity of the model part
+        // e update ang available quantity of the model part
         $modelPart->quantity -= $quantity;
         $modelPart->save();
 
-        // Update the manufacturer's inventory
+        // e update ang manufacturer's inventory
         $inventory = $modelPart->user->inventory;
         if ($inventory) {
             $inventory->update(['quantity' => $inventory->quantity - $quantity]);
         }
 
-        // Update the model part's sold quantity and total sales
+        // e update ang model part's sold quantity and total sales
         $inventorySales = $modelPart->inventorySales;
         if ($inventorySales) {
             $inventorySales->update([
@@ -71,7 +71,7 @@ class PurchaseModelPartController extends Controller
             ]);
         }
 
-        // Redirect back with a success message
+        // then e redirect back with a success message dayon
         return redirect()->back()->with('success', 'Successfully purchased '.$quantity.' '.$modelPart->model_name.' for a total of '.$totalPrice.' Pesos ');
     }
     

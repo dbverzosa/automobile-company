@@ -46,7 +46,7 @@ class PublicController extends Controller
     {
         $allVehiclesQuery = DealerInventory::query()->where('post', true)->with('vehicle');
 
-        // Check if a search query is provided
+        // check if a search query is provided diri
         if ($request->filled('search_query')) {
             $searchQuery = $request->input('search_query');
             $allVehiclesQuery->whereHas('vehicle', function ($query) use ($searchQuery) {
@@ -167,9 +167,6 @@ class PublicController extends Controller
 
         return view('customer.find-dealer', compact('allVehicles', 'dealers'));
     }
-
-
-
 
 
     

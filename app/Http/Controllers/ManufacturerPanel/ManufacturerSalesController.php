@@ -12,12 +12,11 @@ class ManufacturerSalesController extends Controller
 {
     public function index(Request $request)
     {
-        // Start building the query
+        // start sa query
         $query = ManufacturerSale::whereHas('vehicle', function ($q) {
-            $q->where('manufacturer_id', Auth::user()->id); // Assuming the manufacturer ID is stored in the 'manufacturer_id' column
+            $q->where('manufacturer_id', Auth::user()->id); 
         });
     
-        // Add conditions based on search parameters
         if ($request->filled('brand_search')) {
             $query->whereHas('vehicle', function ($q) use ($request) {
                 $q->where('brand', 'like', '%' . $request->input('brand_search') . '%');
@@ -51,7 +50,8 @@ class ManufacturerSalesController extends Controller
                     ->orWhere('sale_price', 'like', '%' . $searchTerm . '%');
             });
         }
-         // Apply sorting
+
+
     $sort = $request->input('sort', 'oldest_to_latest');
     if ($sort === 'oldest_to_latest') {
         $query->orderBy('date_purchased');
@@ -60,16 +60,16 @@ class ManufacturerSalesController extends Controller
     }
 
         
-        // Execute the query and paginate the results
         $sales = $query->paginate(10);
     
-        // Append search parameters to pagination links
         $sales->appends($request->except('page'));
     
-        // Return the view with filtered results
+        // e return ang view with filtered results na
         return view('manufacturer.sales.index', ['sales' => $sales]);
     }
 
+
+    
     public function search(Request $request)
     {
         
@@ -81,14 +81,12 @@ class ManufacturerSalesController extends Controller
         $sort = $request->input('sort', 'high_to_low');
     
     
-        // Apply sorting
         if ($sort === 'high_to_low') {
             $query->orderByDesc('sale_price');
         } elseif ($sort === 'low_to_high') {
             $query->orderBy('sale_price');
         }
     
-        // Add conditions based on search parameters
         if ($request->filled('brand_search')) {
             $query->whereHas('vehicle', function ($q) use ($request) {
                 $q->where('brand', 'like', '%' . $request->input('brand_search') . '%');
@@ -122,25 +120,26 @@ class ManufacturerSalesController extends Controller
             });
         }
     
-        // Fetch the sales data with vehicle information
+        // fetch ang sales data with vehicle information
         $sales = $query->with('vehicle')->get();
     
-        // Group sales by brand, model, and other fields except VIN
+        // e group ang sales by brand, model, and other fields except VIN
         $groupedSales = $sales->groupBy(function ($sale) {
-            return $sale->vehicle->brand . $sale->vehicle->model; // You may need to adjust this based on your actual field names
+            return $sale->vehicle->brand . $sale->vehicle->model; 
         });
     
-        // Compute the total quantity sold for each group
+        // e compute dayon ang total quantity sold for each group
         $totals = [];
         foreach ($groupedSales as $key => $group) {
             $totalQuantitySold = $group->sum('quantity_sold');
             $totals[$key] = $totalQuantitySold;
         }
 
-        // Fetch the sales data with vehicle information and paginate
-    $sales = $query->with('vehicle')->paginate(10); // Change 10 to the number of items you want per page
+        // e fetch ang sales data with vehicle information and paginate dayon 
+        $sales = $query->with('vehicle')->paginate(10); 
 
     
+        //return dayon sa view with filtered results na
         return view('manufacturer.sales.search', compact('sales', 'totals'));
     }
     

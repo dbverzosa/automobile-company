@@ -17,25 +17,24 @@ class ManufacturerController extends Controller
     public function index()
     {
 
-        // Fetch all model parts
-        $modelParts = ModelParts::paginate(9);  // Change 10 to the desired number of items per page
+        // e fetch tanan model parts
+        $modelParts = ModelParts::paginate(9);  
         
-        // Pass model parts data to the view
+        // e pass ang mga model parts data to the view
         return view('manufacturer.dashboard', ['model_parts' => $modelParts]);
     }
 
     public function search(Request $request): View
     {
-        // Retrieve search parameters from the request
+        // retrieve  ang search parameters gikan sa request
         $search = $request->input('search');
         $minPrice = $request->input('min_price');
         $maxPrice = $request->input('max_price');
         $availability = $request->input('availability');
     
-        // Start building the query
+        // start sa query
         $query = ModelParts::query();
     
-        // Add conditions based on search parameters
         if ($search) {
             $query->where('model_name', 'like', '%' . $search . '%');
         }
@@ -49,10 +48,8 @@ class ManufacturerController extends Controller
             $query->where('is_available', (bool) $availability);
         }
     
-        // Execute the query and paginate the results
         $modelParts = $query->paginate(9);
     
-        // Append search parameters to pagination links
         $modelParts->appends($request->except('page'));
     
         // Return the view with search results
@@ -63,7 +60,7 @@ class ManufacturerController extends Controller
     public function buyModelPart(Request $request, ModelParts $modelpart)
     {
       
-        // Optionally, you can return a response
+        //e redirect to return a response dayon 
         return redirect()->back()->with('success', 'Model part purchased successfully.');
     }
 

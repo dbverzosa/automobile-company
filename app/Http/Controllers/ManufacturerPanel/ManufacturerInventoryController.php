@@ -14,10 +14,10 @@ class ManufacturerInventoryController extends Controller
 {
     public function index(Request $request)
     {
-        // Get the logged-in user's ID
+        // e get ang logged-in user's ID which sa kani na case kay manufacturer
         $manufacturerId = auth()->id();
     
-        // Start with the base query
+        // start sa query
         $query = ManufacturerVehicle::selectRaw('brand, model, price, manufacturing_plant, details, color, engine, transmission, COUNT(*) as total_quantity')
             ->where('manufacturer_id', $manufacturerId)
             ->where('quantity', 1)
@@ -26,7 +26,6 @@ class ManufacturerInventoryController extends Controller
             })
             ->groupBy('brand', 'model', 'price', 'manufacturing_plant', 'details', 'color', 'engine', 'transmission');
     
-        // Apply the search filters
         if ($request->has('brand_search')) {
             $query->where('brand', 'like', '%' . $request->input('brand_search') . '%');
         }
@@ -35,14 +34,12 @@ class ManufacturerInventoryController extends Controller
             $query->where('model', 'like', '%' . $request->input('model_search') . '%');
         }
     
-        // Apply the quantity filter
         $query->when($request->input('quantity_filter') === 'high_to_low', function ($query) {
             $query->orderBy('total_quantity', 'desc');
         })->when($request->input('quantity_filter') === 'low_to_high', function ($query) {
             $query->orderBy('total_quantity', 'asc');
         });
     
-        // Paginate the results
         $inventory = $query->paginate(10);
     
         return view('manufacturer.inventory.index', compact('inventory'));

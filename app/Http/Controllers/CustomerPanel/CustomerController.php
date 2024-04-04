@@ -29,10 +29,9 @@ class CustomerController extends Controller
     }
 
 
-
     public function buy(Request $request)
     {
-        // Validate the request
+        
         $request->validate([
             'gender' => 'required',
             'income' => 'required|numeric',
@@ -42,13 +41,13 @@ class CustomerController extends Controller
         ]);
     
     
-        // Get the customer_id from the authenticated user
+        // e get ang customer_id from the authenticated user
         $customer_id = auth()->id();
     
-        // Get the manufacturer_vehicle
+        // e get ang manufacturer_vehicle
         $manufacturer_vehicle = ManufacturerVehicle::findOrFail($request->manufacturer_vehicle_id);
         $dealer_inventory = DealerInventory::where('manufacturer_vehicle_id', $manufacturer_vehicle->id)->firstOrFail();
-        // Create a new reservation
+        // create a new reservation record or data entry which is the buying of vehicle
         $reservation = new CustomerReservation();
         $reservation->customer_id = $customer_id;
         $reservation->gender = $request->gender;
@@ -62,42 +61,27 @@ class CustomerController extends Controller
         $reservation->is_pending = true;
         $reservation->save();
     
-        // Redirect the user back with a success message
+        // redirect the user back with a success message
         return redirect()->back()->with('success', 'Vehicle purchased successfully. NOTE: Subject for approval!');
     }
     
-    // public function customerPurchased ()
-    // {
-    //     $customer_id = auth()->id();
-    //     $purchasedVehicles = CustomerReservation::where('customer_id', $customer_id)->get();
-
-
-
-    //     $allVehicles = DealerInventory::where('post', true)
-    //         ->with('vehicle')
-    //         ->paginate(9);
-
-
-    //     return view('customer.customer-purchased', compact('allVehicles', 'purchasedVehicles'));
-
- 
-    // }
+  
 
     public function customerPurchased(Request $request)
 {
     $customer_id = auth()->id();
     $query = CustomerReservation::where('customer_id', $customer_id);
 
-    // Apply search filters
+    // apply search filters
     if ($request->filled('name')) {
         $name = $request->input('name');
-        // Search for brand specifically
+        // search for specific brand 
         $query->whereHas('manufacturerVehicle', function($q) use ($name) {
-            $q->where('brand', 'like', "%$name%");
+            $q->where('brand', 'like', "%$name%")
+            ->orWhere('model', 'like', "%$name%");
         });
     }
 
-    // Apply other dynamic filters if needed
     if ($request->filled('status-filter')) {
         $status = $request->input('status-filter');
         if ($status === '1') {
@@ -115,12 +99,12 @@ class CustomerController extends Controller
             $query->orderByDesc('date_purchased');
         }
     }
-
-    $purchasedVehicles = $query->paginate(9);
+   
+    $purchasedVehicles = $query->paginate(10);
 
     $allVehicles = DealerInventory::where('post', true)
         ->with('vehicle')
-        ->paginate(9);
+        ->paginate(10);
 
     return view('customer.customer-purchased', compact('allVehicles', 'purchasedVehicles'));
 }

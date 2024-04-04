@@ -97,7 +97,7 @@
     <div class="row justify-content-center mt-3 mb-3">
         <div class="col-md-12">
             <form class="d-flex justify-content-center" role="search" action="{{ route('customer.search') }}" method="GET">
-                <input class="form-control me-2" style="width: 2in;" type="search" placeholder="Search Anything" aria-label="Name" name="name">
+                <input class="form-control me-2" style="width: 2in;" type="search" placeholder="Search Brand/Model" aria-label="Name" name="name">
     
                 <div class="d-inline-block me-2">
                     <select class="form-select" name="status-filter">
@@ -127,7 +127,7 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">More Info</th>
+        
                         <th scope="col">No.</th>
                         <th scope="col">VIN</th>
                         <th scope="col">Brand</th>
@@ -144,9 +144,7 @@
                     @foreach ($purchasedVehicles as $index => $purchasedVehicle)
                         @if ($purchasedVehicle->manufacturerVehicle)
                         <tr>
-                            <td>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#vehicleModal{{ $index }}">More Info</button>
-                            </td>
+                            
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $purchasedVehicle->manufacturerVehicle->vin }}</td>
                             <td>{{ $purchasedVehicle->manufacturerVehicle->brand }}</td>
@@ -168,6 +166,36 @@
         </div>
     </div>
 </div>
+
+<div class="d-flex justify-content-center">
+    <ul class="pagination">
+        @if ($purchasedVehicles->currentPage() > 1)
+        <li class="page-item">
+            <a class="page-link" href="{{ $purchasedVehicles->previousPageUrl() }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        @endif
+        
+        @for ($i = 1; $i <= $purchasedVehicles->lastPage(); $i++)
+        <li class="page-item {{ $purchasedVehicles->currentPage() == $i ? 'active' : '' }}">
+            <a class="page-link" href="{{ $purchasedVehicles->url($i) }}">{{ $i }}</a>
+        </li>
+        @endfor
+        
+        @if ($purchasedVehicles->currentPage() < $purchasedVehicles->lastPage())
+        <li class="page-item">
+            <a class="page-link" href="{{ $purchasedVehicles->nextPageUrl() }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        @endif
+    </ul>
+</div>
+
+<p style="text-align: center; margin-top: 10px;">
+    Showing {{ $purchasedVehicles->firstItem() }} to {{ $purchasedVehicles->lastItem() }} of {{ $purchasedVehicles->total() }} entries
+</p>
 
 @endsection
 

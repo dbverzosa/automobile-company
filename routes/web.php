@@ -125,9 +125,25 @@ Route::middleware(['auth', 'role:dealer'])->group(function () {
     Route::get('dealer/dashboard/purchased-vehicles/search', [DealerController::class, 'purchasedVehiclesSearch'])->name('dealer.purchasedVehicles.search');
     Route::get('dealer/dashboard/car-inventory/{id}/edit', [DealerController::class, 'edit'])->name('dealer.vehicles.edit');
     Route::get('dealer/dashboard/car-inventory/search', [DealerController::class, 'carInventorySearch'])->name('dealer.car-inventory.search');
-    Route::get('dealer/dashboard/vehicle-sales', [DealerController::class, 'sales'])->name('dealer.sales');
-    Route::get('/dealer/dashboard/vehicle-sales/search', [DealerController::class, 'sales'])->name('dealer.sales');
-    Route::put('dealer/dashboard/vehicle-sales{id}', [DealerController::class, 'update'])->name('dealer.update');
    
+    // Route::get('dealer/dashboard/vehicle-sales', [DealerController::class, 'sales'])->name('dealer.sales');
+    // Route::get('/dealer/dashboard/vehicle-sales/search', [DealerController::class, 'sales'])->name('dealer.sales');
+
+    Route::get('/dealer/dashboard/car-sales', [DealerController::class, 'CarSales'])->name('dealer.sales.carSales');
+    Route::get('/dealer/dashboard/car-sales/search', [DealerController::class, 'SearchCarSales'])->name('dealer.sales.carSearch');
+    Route::put('/dealer/dashboard/car-sales{id}', [DealerController::class, 'update'])->name('dealer.update');
+
+    Route::get('/dealer/dashboard/car-sales/track-car-sales', [DealerController::class, 'trackCarSales'])->name('dealer.track-car-sales');
+    Route::get('/dealer/dashboard/car-sales/track-car-sales/search', [DealerController::class, 'SearchtrackCarSales'])->name('dealer.track-car-sales.search');
+    Route::get('/dealer/dashboard/car-sales/track-car-sales/total-tracking', [DealerController::class, 'TrackingTotalSales'])->name('dealer.track-car-sales.total');
+    Route::get('/dealer/dashboard/car-sales/track-car-sales/total-tracking/search', [DealerController::class, 'SearchTrackingTotalSales'])->name('dealer.track-car-sales.total-search');
+
 
 });
+//     Route::get('dealer/dashboard/vehicle-sales', [DealerController::class, 'sales'])->name('dealer.sales');
+//     Route::get('/dealer/dashboard/vehicle-sales/search', [DealerController::class, 'sales'])->name('dealer.sales');
+//     Route::put('dealer/dashboard/vehicle-sales{id}', [DealerController::class, 'update'])->name('dealer.update');
+//     Route::get(' /dealer/dashboard/vehicle-sales/track-sales', [DealerController::class, 'trackSales'])->name('dealer.track-sales');
+//     Route::get('/dealer/dashboard/vehicle-sales/track-sales/search', [DealerController::class, 'trackSales'])->name('dealer.track-sales');
+//     Route::get('/dealer/dashboard/vehicle-sales/track-sales/total', [DealerController::class, 'totalTrackSales'])->name('dealer.total-track-sales');
+// });

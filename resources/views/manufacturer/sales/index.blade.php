@@ -37,7 +37,6 @@
                     <input type="text" class="form-control" placeholder="Enter year" name="year" value="{{ request('year') }}">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="submit">Search</button>
-                        <a href="{{ route('manufacturer.sales.index') }}" class="btn btn-outline-secondary">Show All</a>
 
                     </div>
                 </div>
@@ -47,6 +46,8 @@
                     <input type="text" class="form-control" placeholder="Search anything here" name="search_anything" value="{{ request('search_anything') }}">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        <a href="{{ route('manufacturer.sales.index') }}" class="btn btn-outline-secondary">Show All</a>
+
                     </div>
                 </div>
             </div>

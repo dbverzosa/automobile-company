@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DevCo - where awesome car is located</title>
+  <title>DevCo - Where awesome car is located</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
   <style>
@@ -224,7 +224,7 @@
     @if (Route::has('login'))
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="{{ route('login') }}" role="button" aria-expanded="false">
                     Login as
                 </a>
                 <ul class="dropdown-menu">

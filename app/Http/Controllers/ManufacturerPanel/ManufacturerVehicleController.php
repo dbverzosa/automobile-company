@@ -15,7 +15,7 @@ class ManufacturerVehicleController extends Controller
 {
     $query = ManufacturerVehicle::where('manufacturer_id', auth()->id());
 
-    // Exclude vehicles that have been purchased by dealers
+    // e exclude ang vehicles nga na purchased na sa dealers
     $query->whereDoesntHave('dealerInventories');
 
     if ($request->filled('brand')) {
@@ -41,16 +41,16 @@ class ManufacturerVehicleController extends Controller
         });
     }
 
-    // Paginate the results with 10 items per page (adjust as needed)
     $vehicles = $query->paginate(10);
 
-    // Filter the distinct brands and models based on the user's vehicles
+    // e filter ang distinct brands and models based sa user's vehicles
     $brands = $query->distinct()->pluck('brand');
     $models = $query->distinct()->pluck('model');
 
-    // Check if any vehicles were found
+    // e check if any vehicles were found
     $message = $vehicles->isEmpty() ? 'No results found.' : '';
 
+    //return dayon sa view
     return view('manufacturer.vehicles.index', ['vehicles' => $vehicles, 'brands' => $brands, 'models' => $models, 'message' => $message]);
 }
 
@@ -67,10 +67,10 @@ public function store(Request $request)
         'color' => 'string|nullable',
         'engine' => 'string|nullable',
         'transmission' => 'string|nullable',
-        'image' => 'required|image', // Validate the image upload
+        'image' => 'required|image', 
     ]);
 
-    // Create vehicles with unique VINs based on the quantity
+    // create vehicles with unique VINs based sa quantity
     $vehicles = [];
     $user = auth()->user();
     for ($i = 0; $i < $request->quantity; $i++) {
@@ -86,7 +86,7 @@ public function store(Request $request)
         $vehicle->engine = $request->engine;
         $vehicle->transmission = $request->transmission;
 
-        // Upload and store the image
+        // upload and store the image
         $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
         $request->file('image')->storeAs('public/vehicles_images', $imageName);
         $vehicle->image = $imageName;
@@ -95,10 +95,10 @@ public function store(Request $request)
         $vehicle->save();
         $vehicles[] = $vehicle;
 
-      //Create a corresponding entry in the inventory
+      // create a corresponding new record or data entry in the inventory too
         $inventory = new ManufacturerVehicleInventory();
         $inventory->vehicle_id = $vehicle->id;
-        $inventory->is_sold = false; // Set as unsold
+        $inventory->is_sold = false; 
         $inventory->save();
 
     }
@@ -112,7 +112,7 @@ public function store(Request $request)
 
     private function generateUniqueVin()
     {
-        // Generate a unique VIN (you can use a more sophisticated logic here)
+        // generate a unique VIN 
         return Str::random(5);
     }
 

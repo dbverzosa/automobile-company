@@ -105,7 +105,7 @@
     
     <a href="{{ url('dealer/dashboard/car-inventory') }}">Car Inventory</a>
     
-    <a href="{{ url('dealer/dashboard/vehicle-sales') }}">Car Sales</a>
+    <a href="{{ url('dealer/dashboard/car-sales') }}">Car Sales</a>
     
 <div>
     <form method="POST" action="{{ route('logout') }}">
